@@ -20,7 +20,7 @@ if [[ ${cuda_compiler_version} != "None" ]]; then
       13.0)
           export TORCH_CUDA_ARCH_LIST="7.5;8.0;8.6;9.0;10.0;11.0;12.0+PTX"
           # c.f. https://github.com/pytorch/pytorch/pull/161316
-          # export TORCH_NVCC_FLAGS="$TORCH_NVCC_FLAGS -compress-mode=size"
+          # export TORCH_NVCC_FLAGS="$TORCH_NVCC_FLAGS -compress-mode=size"
           ;;
       *)
           echo "No CUDA architecture list exists for CUDA v${cuda_compiler_version}. See build.sh for information on adding one."
