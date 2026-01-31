@@ -11,13 +11,21 @@ if [[ ${cuda_compiler_version} != "None" ]]; then
   export DS_BUILD_OPS=1
 
   # Set the CUDA arch list from
-  # https://github.com/conda-forge/pytorch-cpu-feedstock/blob/c5ded360dcc4f62d6cd98b3748c2a10c50aa45f7/recipe/build.sh#L220
-  if [[ ${cuda_compiler_version} == 12.* ]]; then
-    export TORCH_CUDA_ARCH_LIST="6.0;6.1;7.0;7.5;8.0;8.6;8.9;9.0;10.0;12.0+PTX"
-  else
-    echo "Unsupported cuda version. edit build.sh"
-    exit 1
-  fi
+  # https://github.com/conda-forge/pytorch-cpu-feedstock/blob/238fe50d9f9a3957584d3713531a81eec91e9f0e/recipe/build.sh#L217-L240
+  # We could instead use CF_TORCH_CUDA_ARCH_LIST, available since CF pytorch 2.10?
+  case ${cuda_compiler_version} in
+      12.[89])
+          export TORCH_CUDA_ARCH_LIST="5.0;6.0;7.0;7.5;8.0;8.6;9.0;10.0;12.0+PTX"
+          ;;
+      13.0)
+          export TORCH_CUDA_ARCH_LIST="7.5;8.0;8.6;9.0;10.0;11.0;12.0+PTX"
+          # c.f. https://github.com/pytorch/pytorch/pull/161316
+          # export TORCH_NVCC_FLAGS="$TORCH_NVCC_FLAGS -compress-mode=size"
+          ;;
+      *)
+          echo "No CUDA architecture list exists for CUDA v${cuda_compiler_version}. See build.sh for information on adding one."
+          exit 1
+  esac
 
 else
   export DS_BUILD_OPS=0
